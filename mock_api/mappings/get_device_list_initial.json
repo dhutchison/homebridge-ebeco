@@ -1,0 +1,23 @@
+{
+    "scenarioName": "Update Device State",
+    "requiredScenarioState": "Started",
+    "request": {
+        "method": "GET",
+        "url": "/api/services/app/Devices/GetUserDevices",
+        "headers": {
+            "Abp.TenantId": {
+                "equalTo": "1"
+            },
+            "Content-Type": {
+                "equalTo": "application/json"
+            },
+            "Authorization": {
+                "equalTo": "Bearer ACCESS_TOKEN"
+            }
+        }
+    },
+    "response": {
+        "status": 200,
+        "bodyFileName": "get_device_list_initial.json"
+    }
+}

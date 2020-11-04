@@ -1,0 +1,29 @@
+{
+    "scenarioName": "Update Device State",
+    "requiredScenarioState": "Started",
+    "newScenarioState": "temperature updated to 24",
+    "request": {
+        "method": "PUT",
+        "url": "/api/services/app/Devices/UpdateUserDevice",
+        "headers": {
+            "Abp.TenantId": {
+                "equalTo": "1"
+            },
+            "Content-Type": {
+                "equalTo": "application/json"
+            },
+            "Authorization": {
+                "equalTo": "Bearer ACCESS_TOKEN"
+            }
+        },
+        "bodyPatterns": [
+            { 
+                "equalToJson": "{ \"powerOn\": true, \"temperatureSet\": 24, \"id\": \"DEVICE_ID\" }" 
+            }
+         ]
+    },
+    "response": {
+        "status": 201,
+        "bodyFileName": "update_device_state_response.json"
+    }
+}

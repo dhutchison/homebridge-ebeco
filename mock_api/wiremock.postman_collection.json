@@ -1,0 +1,213 @@
+{
+	"info": {
+		"_postman_id": "1f8216cf-a843-4696-ac73-9602577fb296",
+		"name": "wiremock",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication Success",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Abp.TenantId",
+						"value": "1",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userNameOrEmailAddress\": \"USER NAME\",\n    \"password\": \"PASSWORD\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/TokenAuth/Authenticate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"TokenAuth",
+						"Authenticate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Device State",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "ACCESS_TOKEN",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Abp.TenantId",
+						"type": "text",
+						"value": "1"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"powerOn\": true,\n    \"temperatureSet\": 24,\n    \"id\": \"DEVICE_ID\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/services/app/Devices/UpdateUserDevice",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"services",
+						"app",
+						"Devices",
+						"UpdateUserDevice"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Authentication Fail",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Abp.TenantId",
+						"type": "text",
+						"value": "1"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userNameOrEmailAddress\": \"USER NAME\",\n    \"password\": \"hunter2\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/TokenAuth/Authenticate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"TokenAuth",
+						"Authenticate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Authentication Fail (real)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Abp.TenantId",
+						"type": "text",
+						"value": "1"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userNameOrEmailAddress\": \"USER NAME\",\n    \"password\": \"PASSWORD\"\n}"
+				},
+				"url": {
+					"raw": "https://ebecoconnect.com/api/TokenAuth/Authenticate",
+					"protocol": "https",
+					"host": [
+						"ebecoconnect",
+						"com"
+					],
+					"path": [
+						"api",
+						"TokenAuth",
+						"Authenticate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Device List",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "ACCESS_TOKEN",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Abp.TenantId",
+						"value": "1",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/services/app/Devices/GetUserDevices",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"services",
+						"app",
+						"Devices",
+						"GetUserDevices"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
