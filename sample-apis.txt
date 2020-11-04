@@ -1,0 +1,18 @@
+API SPEC: https://ebecoconnect.com/swagger/index.html 
+
+HEADERS: Abp.TenantId = 1 Content-Type = application/json  
+POST: https://ebecoconnect.com/api/TokenAuth/Authenticate  
+{ "userNameOrEmailAddress": "USER NAME", "password": "PASSWORD" }   
+Response:  
+{ "result": { "accessToken": "ACCESS_TOKEN", "encryptedAccessToken": "ENCRYPTED_ACCESS_TOKEN", "expireInSeconds": 86400, "shouldResetPassword": false, "passwordResetCode": null, "userId": USER_ID, "requiresTwoFactorVerification": false, "twoFactorAuthProviders": null, "twoFactorRememberClientToken": null, "returnUrl": null }, "targetUrl": null, "success": true, "error": null, "unAuthorizedRequest": false, "__abp": true } 
+
+  --------------------------------------------------------------------------- 
+GET: https://ebecoconnect.com/api/services/app/Devices/GetUserDevices 
+Authorization - Bearer Token - Token = ACCESS_TOKEN  
+Response:  { "result": [ { "displayName": "NAME", "powerOn": true, "selectedProgram": "Home", "programState": "Standby", "temperatureSet": 20.0, "temperatureFloor": 24.0, "temperatureRoom": 23.0, "relayOn": false, "minutesToTarget": 0, "remoteInput": false, "hasError": false, "errorMessage": null, "todaysOnMinutes": 359, "building": { "name": "BUILDING_NAME", "id": BUILDING_ID }, "id": DEVICE_ID } ], "targetUrl": null, "success": true, "error": null, "unAuthorizedRequest": false, "__abp": true }
+
+ ------------------------------------------ 
+PUT: https://ebecoconnect.com/api/services/app/Devices/UpdateUserDevice 
+Authorization - Bearer Token - Token = ACCESS_TOKEN  
+{ "powerOn": true, "temperatureSet": 24, "id": DEVICE_ID }   
+Response:  { "result": null, "targetUrl": null, "success": true, "error": null, "unAuthorizedRequest": false, "__abp": true }

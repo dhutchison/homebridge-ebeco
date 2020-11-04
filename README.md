@@ -5,6 +5,32 @@
 
 </p>
 
+# TODO UPDATE README
+
+To generate the API client: swagger-codegen generate -l typescript-fetch -i https://ebecoconnect.com/swagger/v1/swagger.json -o src/api-client
+
+# TODO: Tasks
+
+Platform which handles:
+* reading configuration
+* authentication & token renewal (half way through expiration?)
+* getting list of devices
+* accessory creation & removal
+
+Accessory which handles:
+* get device status
+* set device status
+* defers to platform for API host & token
+* created with a deviceId / initial device status
+
+Docker-compose file, using wiremock, to create a mock API server
+
+Configuration file requires:
+* username
+* password
+* (optional) api host (for pointing to mock server)
+
+
 
 # Homebridge Platform Plugin Template
 
