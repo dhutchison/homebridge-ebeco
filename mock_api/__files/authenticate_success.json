@@ -1,0 +1,19 @@
+{
+    "result": {
+        "accessToken": "ACCESS_TOKEN",
+        "encryptedAccessToken": "ENCRYPTED_ACCESS_TOKEN",
+        "expireInSeconds": 86400,
+        "shouldResetPassword": false,
+        "passwordResetCode": null,
+        "userId": "USER_ID",
+        "requiresTwoFactorVerification": false,
+        "twoFactorAuthProviders": null,
+        "twoFactorRememberClientToken": null,
+        "returnUrl": null
+    },
+    "targetUrl": null,
+    "success": true,
+    "error": null,
+    "unAuthorizedRequest": false,
+    "__abp": true
+}

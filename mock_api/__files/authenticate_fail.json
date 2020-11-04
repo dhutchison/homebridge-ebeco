@@ -1,0 +1,13 @@
+{
+    "result": null,
+    "targetUrl": null,
+    "success": false,
+    "error": {
+        "code": 0,
+        "message": "Login failed!",
+        "details": "Invalid user name or password",
+        "validationErrors": null
+    },
+    "unAuthorizedRequest": false,
+    "__abp": true
+}

@@ -1,0 +1,8 @@
+version: "3.8"
+services:
+  wiremock:
+    image: rodolpheche/wiremock
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./mock_api:/home/wiremock

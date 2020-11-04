@@ -1,0 +1,23 @@
+{
+    "request": {
+        "method": "POST",
+        "url": "/api/TokenAuth/Authenticate",
+        "headers": {
+            "Abp.TenantId": {
+                "equalTo": "1"
+            },
+            "Content-Type": {
+                "equalTo": "application/json"
+            }
+        },
+        "bodyPatterns": [
+            {
+                "equalToJson": "{ \"userNameOrEmailAddress\": \"USER NAME\", \"password\": \"PASSWORD\" }"
+            }
+        ]
+    },
+    "response": {
+        "status": 200,
+        "bodyFileName": "authenticate_success.json"
+    }
+}
