@@ -7,7 +7,7 @@
                 "equalTo": "1"
             },
             "Content-Type": {
-                "equalTo": "application/json"
+                "contains": "application/json"
             }
         },
         "bodyPatterns": [

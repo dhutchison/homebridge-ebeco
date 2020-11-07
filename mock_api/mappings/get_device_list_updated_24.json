@@ -9,7 +9,7 @@
                 "equalTo": "1"
             },
             "Content-Type": {
-                "equalTo": "application/json"
+                "contains": "application/json"
             },
             "Authorization": {
                 "equalTo": "Bearer ACCESS_TOKEN"

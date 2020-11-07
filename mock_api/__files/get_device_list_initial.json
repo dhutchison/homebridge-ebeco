@@ -18,7 +18,7 @@
                 "name": "BUILDING_NAME",
                 "id": "BUILDING_ID"
             },
-            "id": "DEVICE_ID"
+            "id": 11
         }
     ],
     "targetUrl": null,
