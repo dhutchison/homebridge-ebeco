@@ -1,26 +1,19 @@
 import { Service, PlatformAccessory, CharacteristicValue, CharacteristicSetCallback, CharacteristicGetCallback } from 'homebridge';
 
-import { ExampleHomebridgePlatform } from './platform';
+import { EbecoHomebridgePlatform } from './platform';
+import { Device, DeviceUpdateRequest, EbecoApi } from './lib/ebecoApi';
 
 /**
  * Platform Accessory
  * An instance of this class is created for each accessory your platform registers
  * Each accessory may expose multiple services of different service types.
  */
-export class ExamplePlatformAccessory {
+export class EbecoPlatformAccessory {
+
   private service: Service;
 
-  /**
-   * These are just used to create a working example
-   * You should implement your own code to track the state of your accessory
-   */
-  private exampleStates = {
-    On: false,
-    Brightness: 100,
-  };
-
   constructor(
-    private readonly platform: ExampleHomebridgePlatform,
+    private readonly platform: EbecoHomebridgePlatform,
     private readonly accessory: PlatformAccessory,
   ) {
 
@@ -30,122 +23,142 @@ export class ExamplePlatformAccessory {
       .setCharacteristic(this.platform.Characteristic.Model, 'Default-Model')
       .setCharacteristic(this.platform.Characteristic.SerialNumber, 'Default-Serial');
 
-    // get the LightBulb service if it exists, otherwise create a new LightBulb service
-    // you can create multiple services for each accessory
-    this.service = this.accessory.getService(this.platform.Service.Lightbulb) || this.accessory.addService(this.platform.Service.Lightbulb);
+    /* Get the service if it exists, otherwise create a new service */
+    this.service = this.accessory.getService(this.platform.Service.Thermostat) || 
+      this.accessory.addService(this.platform.Service.Thermostat);
 
-    // set the service name, this is what is displayed as the default name on the Home app
-    // in this example we are using the name we stored in the `accessory.context` in the `discoverDevices` method.
-    this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.exampleDisplayName);
+    /* Set the service name, this is what is displayed as the default name on the Home app */
+    this.service.setCharacteristic(this.platform.Characteristic.Name, 
+      accessory.context.device.displayName);
 
-    // each service must implement at-minimum the "required characteristics" for the given service type
-    // see https://developers.homebridge.io/#/service/Lightbulb
-
-    // register handlers for the On/Off Characteristic
-    this.service.getCharacteristic(this.platform.Characteristic.On)
-      .on('set', this.setOn.bind(this))                // SET - bind to the `setOn` method below
-      .on('get', this.getOn.bind(this));               // GET - bind to the `getOn` method below
-
-    // register handlers for the Brightness Characteristic
-    this.service.getCharacteristic(this.platform.Characteristic.Brightness)
-      .on('set', this.setBrightness.bind(this));       // SET - bind to the 'setBrightness` method below
-
-
-    /**
-     * Creating multiple services of the same type.
+    /* Set the "required characteristics" based on the initial device state we got. 
+     *
+     * Also configure 'set' methods for characteristics we want to control. Not setting up
+     * any 'get' methods, we will periodically poll the ebeco API instead of doing it 
+     * on-demand.  
      * 
-     * To avoid "Cannot add a Service with the same UUID another Service without also defining a unique 'subtype' property." error,
-     * when creating multiple services of the same type, you need to use the following syntax to specify a name and subtype id:
-     * this.accessory.getService('NAME') || this.accessory.addService(this.platform.Service.Lightbulb, 'NAME', 'USER_DEFINED_SUBTYPE_ID');
-     * 
-     * The USER_DEFINED_SUBTYPE must be unique to the platform accessory (if you platform exposes multiple accessories, each accessory
-     * can use the same sub type id.)
+     * See https://developers.homebridge.io/#/service/Thermostat
+     * */
+
+    this.service.getCharacteristic(this.platform.Characteristic.CurrentHeatingCoolingState)
+      .updateValue(this.getCurrentHeatingCoolingStateForDevice(accessory.context.device));
+    
+    this.service.getCharacteristic(this.platform.Characteristic.TargetHeatingCoolingState)
+      .updateValue(this.getTargetHeatingCoolingStateForDevice(accessory.context.device));
+    
+    this.service.getCharacteristic(this.platform.Characteristic.CurrentTemperature)
+      .updateValue(this.getCurrentTemperatureForDevice(accessory.context.device));
+    
+    this.service.getCharacteristic(this.platform.Characteristic.TargetTemperature)
+      .updateValue(accessory.context.device.temperatureSet)
+      .on('set', this.setTargetTemperature.bind(this));
+
+    this.service.getCharacteristic(this.platform.Characteristic.TemperatureDisplayUnits)
+      .updateValue(this.platform.Characteristic.TemperatureDisplayUnits.CELSIUS);
+    
+
+    /* Update the state of the plugin periodically, instead of on-demand. 
+     * Poll frquency is in milliseconds.
      */
-
-    // Example: add two "motion sensor" services to the accessory
-    const motionSensorOneService = this.accessory.getService('Motion Sensor One Name') ||
-      this.accessory.addService(this.platform.Service.MotionSensor, 'Motion Sensor One Name', 'YourUniqueIdentifier-1');
-
-    const motionSensorTwoService = this.accessory.getService('Motion Sensor Two Name') ||
-      this.accessory.addService(this.platform.Service.MotionSensor, 'Motion Sensor Two Name', 'YourUniqueIdentifier-2');
-
-    /**
-     * Updating characteristics values asynchronously.
-     * 
-     * Example showing how to update the state of a Characteristic asynchronously instead
-     * of using the `on('get')` handlers.
-     * Here we change update the motion sensor trigger states on and off every 10 seconds
-     * the `updateCharacteristic` method.
-     * 
-     */
-    let motionDetected = false;
+    const pollDuration = this.platform.config.pollFrequency || 10000;
+    this.platform.log.info('Polling for device status updates every %s ms', pollDuration);
     setInterval(() => {
-      // EXAMPLE - inverse the trigger
-      motionDetected = !motionDetected;
 
-      // push the new value to HomeKit
-      motionSensorOneService.updateCharacteristic(this.platform.Characteristic.MotionDetected, motionDetected);
-      motionSensorTwoService.updateCharacteristic(this.platform.Characteristic.MotionDetected, !motionDetected);
+      this.platform.log.debug('Getting updated device state on timer');
 
-      this.platform.log.debug('Triggering motionSensorOneService:', motionDetected);
-      this.platform.log.debug('Triggering motionSensorTwoService:', !motionDetected);
-    }, 10000);
+      this.getUpdatedDeviceState()
+        .then(device => {
+          this.service.updateCharacteristic(
+            this.platform.Characteristic.CurrentHeatingCoolingState, 
+            this.getCurrentHeatingCoolingStateForDevice(device));
+
+          this.service.updateCharacteristic(
+            this.platform.Characteristic.TargetHeatingCoolingState, 
+            this.getTargetHeatingCoolingStateForDevice(device));
+      
+          this.service.updateCharacteristic(this.platform.Characteristic.CurrentTemperature, this.getCurrentTemperatureForDevice(device));
+
+          this.service.updateCharacteristic(this.platform.Characteristic.TargetTemperature, device.temperatureSet);
+      
+        })
+        .catch(err => {
+          this.platform.log.error('Failed to load updated device state: %s', err);
+        });
+
+      
+    }, pollDuration);
+  }
+
+
+  private getCurrentTemperatureForDevice(device: Device): number {
+    return device.temperatureRoom;
+  }
+
+  private getCurrentHeatingCoolingStateForDevice(device: Device) {
+    return device.powerOn ? 
+      this.platform.Characteristic.CurrentHeatingCoolingState.HEAT : 
+      this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
+  }
+
+  private getTargetHeatingCoolingStateForDevice(device: Device) {
+    return device.powerOn ? 
+      this.platform.Characteristic.TargetHeatingCoolingState.HEAT : 
+      this.platform.Characteristic.TargetHeatingCoolingState.OFF;
   }
 
   /**
-   * Handle "SET" requests from HomeKit
-   * These are sent when the user changes the state of an accessory, for example, turning on a Light bulb.
-   */
-  setOn(value: CharacteristicValue, callback: CharacteristicSetCallback) {
-
-    // implement your own code to turn your device on/off
-    this.exampleStates.On = value as boolean;
-
-    this.platform.log.debug('Set Characteristic On ->', value);
-
-    // you must call the callback function
-    callback(null);
-  }
-
-  /**
-   * Handle the "GET" requests from HomeKit
-   * These are sent when HomeKit wants to know the current state of the accessory, for example, checking if a Light bulb is on.
+   * Get the updated state for this device. 
    * 
-   * GET requests should return as fast as possbile. A long delay here will result in
-   * HomeKit being unresponsive and a bad user experience in general.
-   * 
-   * If your device takes time to respond you should update the status of your device
-   * asynchronously instead using the `updateCharacteristic` method instead.
-
-   * @example
-   * this.service.updateCharacteristic(this.platform.Characteristic.On, true)
+   * TODO: Change to use the individual device API. 
    */
-  getOn(callback: CharacteristicGetCallback) {
+  private getUpdatedDeviceState(): Promise<Device> {
 
-    // implement your own code to check if the device is on
-    const isOn = this.exampleStates.On;
+    const apiClient = new EbecoApi(this.platform, this.platform.log, this.platform.config);
 
-    this.platform.log.debug('Get Characteristic On ->', isOn);
+    return new Promise<Device>((resolve, reject) => {
+      apiClient.getUserDevices()
+        .then(devices => {
+          const foundDevice = devices.find(value => value.id === this.accessory.context.device.id);
 
-    // you must call the callback function
-    // the first argument should be null if there were no errors
-    // the second argument should be the value to return
-    callback(null, isOn);
+          if(foundDevice) {
+            this.accessory.context.lastState = foundDevice;
+
+            this.platform.log.debug('Updated device state %o', foundDevice);
+
+            resolve(foundDevice);
+          } else {
+            this.platform.log.warn('Could not find device for id: %s', this.accessory.context.device.id);
+            reject('Could not find device for id: ' + this.accessory.context.device.id);
+          }
+        }).catch(err => {
+          this.platform.log.error('Failed to load updated device state: %o', err);
+          reject(err);
+        });
+    });
+
   }
 
   /**
-   * Handle "SET" requests from HomeKit
-   * These are sent when the user changes the state of an accessory, for example, changing the Brightness
+   * Set the target termperature for the themostat. 
+   * @param value the new value
+   * @param callback the homebridge callback to invoke after the request has been sent to the device. 
    */
-  setBrightness(value: CharacteristicValue, callback: CharacteristicSetCallback) {
+  private setTargetTemperature(value: CharacteristicValue, callback: CharacteristicSetCallback) {
 
-    // implement your own code to set the brightness
-    this.exampleStates.Brightness = value as number;
+    const newTemp = value as number;
 
-    this.platform.log.debug('Set Characteristic Brightness -> ', value);
+    const updatedDeviceState: DeviceUpdateRequest = {
+      id: this.accessory.context.device.id,
+      powerOn: true,
+      temperatureSet: newTemp,
+    };
 
-    // you must call the callback function
-    callback(null);
+    this.platform.log.debug('setTargetTemperature -> %o', updatedDeviceState);
+
+    const apiClient = new EbecoApi(this.platform, this.platform.log, this.platform.config);
+    apiClient.updateDeviceState(updatedDeviceState)
+      .then(success => callback(null, success))
+      .catch(err => callback(err));
   }
 
 }
