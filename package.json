@@ -1,16 +1,19 @@
 {
-  "private": true,
-  "displayName": "Plugin Name",
-  "name": "homebridge-plugin-name",
-  "version": "1.0.0",
+  "displayName": "Ebeco",
+  "name": "@devwithimagination/homebridge-ebeco",
+  "version": "0.0.1-alpha.0",
   "description": "A short description about what your plugin does.",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/USERNAME/GITHUB_PROJECT_NAME.git"
+    "url": "https://github.com/dhutchison/homebridge-ebeco.git"
   },
   "bugs": {
-    "url": "https://github.com/USERNAME/GITHUB_PROJECT_NAME/issues"
+    "url": "https://github.com/dhutchison/homebridge-ebeco/issues"
+  },
+  "author": {
+    "name": "David Hutchison",
+    "url": "https://www.devwithimagination.com"
   },
   "engines": {
     "node": ">=10.17.0",
@@ -24,9 +27,13 @@
     "prepublishOnly": "npm run lint && npm run build"
   },
   "keywords": [
-    "homebridge-plugin"
+    "homebridge-plugin",
+    "homebridge-ebeco",
+    "ebeco"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "axios": "^0.21.0"
+  },
   "devDependencies": {
     "@types/node": "^14.14.2",
     "@typescript-eslint/eslint-plugin": "^4.5.0",

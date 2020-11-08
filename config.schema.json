@@ -1,5 +1,5 @@
 {
-  "pluginAlias": "ExampleHomebridgePlugin",
+  "pluginAlias": "Ebeco",
   "pluginType": "platform",
   "singular": true,
   "schema": {
@@ -9,8 +9,35 @@
         "title": "Name",
         "type": "string",
         "required": true,
-        "default": "Example Dynamic Platform"
+        "default": "Ebeco"
+      },
+      "username": {
+        "title": "Username",
+        "type": "string",
+        "required": true
+      },
+      "password": {
+        "title": "Password",
+        "type": "string",
+        "required": true
+      },
+      "pollFrequency": {
+        "title": "API Poll Frequency (ms)",
+        "type": "integer",
+        "required": false,
+        "placeholder": 10000,
+        "minimum": 500,
+        "maximum": 60000,
+        "description": "How frequently to update the plugin state from the Ebeco API"
+      },
+      "apiHost": {
+        "title": "API Host",
+        "type": "string",
+        "required": false,
+        "placeholder": "https://ebecoconnect.com",
+        "description": "Allows the API target to be set. When development testing with the mock server, this should be set to http://localhost:8080"
       }
+
     }
   }
 }
