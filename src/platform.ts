@@ -11,11 +11,15 @@ import { EbecoPlatformAccessory } from './platformAccessory';
  * parse the user config and discover/register accessories with Homebridge.
  */
 export class EbecoHomebridgePlatform implements DynamicPlatformPlugin {
+
   public readonly Service: typeof Service = this.api.hap.Service;
   public readonly Characteristic: typeof Characteristic = this.api.hap.Characteristic;
 
   // this is used to track restored cached accessories
   public readonly accessories: PlatformAccessory[] = [];
+
+  /* API Client to share between accessories */
+  private _apiClient: EbecoApi;
 
   constructor(
     public readonly log: Logger,
@@ -23,12 +27,10 @@ export class EbecoHomebridgePlatform implements DynamicPlatformPlugin {
     public readonly api: API,
   ) {
 
-    /* Validate the configuration */
-    if (!this.config.username || !this.config.password) {
-      this.log.warn('username & password not found in config');
-      throw new Error('Not all required configuration values found. Need "username" and "password".');
-    }
-
+    /* Setup the API client. This will validate the configuration values required
+     * to call the API. 
+     */
+    this._apiClient = new EbecoApi(this.log, this.config);
 
     this.log.debug('Finished initializing platform:', this.config.name);
 
@@ -40,8 +42,7 @@ export class EbecoHomebridgePlatform implements DynamicPlatformPlugin {
       log.debug('Executed didFinishLaunching callback');
 
       /* Perform an initial login */
-      const apiClient = new EbecoApi(this, this.log, this.config);
-      apiClient.login()
+      this._apiClient.login()
         .then(loginResponse => {
           this.log.debug('Login: %o', loginResponse);
           this.log.info('Logged in to Ebeco API. Token valid for %s seconds', loginResponse.expireInSeconds);
@@ -56,6 +57,14 @@ export class EbecoHomebridgePlatform implements DynamicPlatformPlugin {
 
     });
   }
+
+  /**
+   * Get the configured API client. 
+   */
+  public get apiClient(): EbecoApi {
+    return this._apiClient;
+  }
+  
 
   /**
    * This function is invoked when homebridge restores cached accessories from disk at startup.
@@ -76,8 +85,7 @@ export class EbecoHomebridgePlatform implements DynamicPlatformPlugin {
   discoverDevices() {
 
     /* Load devices */
-    const apiClient = new EbecoApi(this, this.log, this.config);
-    apiClient.getUserDevices()
+    this._apiClient.getUserDevices()
       .then(devices => {
         this.log.debug('Devices: %o', devices);
         this.log.info('Discovered %s devices', devices.length);

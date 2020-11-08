@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { DynamicPlatformPlugin, Logger } from 'homebridge';
+import { Logger } from 'homebridge';
 
 import { EbecoPlatformConfig } from '../settings';
 
@@ -118,10 +118,15 @@ export interface DeviceUpdateRequest {
 export class EbecoApi {
 
   constructor(
-    private readonly platform: DynamicPlatformPlugin,
     private readonly log: Logger,
     private readonly initialConfig: EbecoPlatformConfig,
   ) {
+
+    /* Validate the configuration */
+    if (!initialConfig.username || !initialConfig.password) {
+      this.log.warn('username & password not found in config');
+      throw new Error('Not all required configuration values found. Need "username" and "password".');
+    }
 
     if (initialConfig.apiHost === undefined) {
       initialConfig.apiHost = 'https://ebecoconnect.com';

@@ -1,7 +1,7 @@
 import { Service, PlatformAccessory, CharacteristicValue, CharacteristicSetCallback } from 'homebridge';
 
 import { EbecoHomebridgePlatform } from './platform';
-import { Device, DeviceUpdateRequest, EbecoApi } from './lib/ebecoApi';
+import { Device, DeviceUpdateRequest } from './lib/ebecoApi';
 
 /**
  * Platform Accessory
@@ -132,10 +132,8 @@ export class EbecoPlatformAccessory {
    */
   private getUpdatedDeviceState(): Promise<Device> {
 
-    const apiClient = new EbecoApi(this.platform, this.platform.log, this.platform.config);
-
     return new Promise<Device>((resolve, reject) => {
-      apiClient.getUserDevices()
+      this.platform.apiClient.getUserDevices()
         .then(devices => {
           const foundDevice = devices.find(value => value.id === this.accessory.context.device.id);
 
@@ -174,8 +172,7 @@ export class EbecoPlatformAccessory {
 
     this.platform.log.debug('setTargetTemperature -> %o', updatedDeviceState);
 
-    const apiClient = new EbecoApi(this.platform, this.platform.log, this.platform.config);
-    apiClient.updateDeviceState(updatedDeviceState)
+    this.platform.apiClient.updateDeviceState(updatedDeviceState)
       .then(success => {
         if (success) {
           /* API reported a successful update */
@@ -209,8 +206,7 @@ export class EbecoPlatformAccessory {
     
         this.platform.log.debug('setTargetHeatingCoolingState -> %o', updatedDeviceState);
     
-        const apiClient = new EbecoApi(this.platform, this.platform.log, this.platform.config);
-        apiClient.updateDeviceState(updatedDeviceState)
+        this.platform.apiClient.updateDeviceState(updatedDeviceState)
           .then(success => {
             if (success) {
               /* API reported a successful update */
