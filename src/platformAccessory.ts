@@ -1,4 +1,4 @@
-import { Service, PlatformAccessory, CharacteristicValue, CharacteristicSetCallback, CharacteristicGetCallback } from 'homebridge';
+import { Service, PlatformAccessory, CharacteristicValue, CharacteristicSetCallback } from 'homebridge';
 
 import { EbecoHomebridgePlatform } from './platform';
 import { Device, DeviceUpdateRequest, EbecoApi } from './lib/ebecoApi';

@@ -40,9 +40,15 @@
     "@typescript-eslint/parser": "^4.5.0",
     "eslint": "^7.12.0",
     "homebridge": "^1.2.3",
+    "husky": "^4.3.0",
     "nodemon": "^2.0.6",
     "rimraf": "^3.0.2",
     "ts-node": "^9.0.0",
     "typescript": "^4.0.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint"
+    }
   }
 }
