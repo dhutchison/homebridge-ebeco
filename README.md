@@ -5,23 +5,14 @@
 
 </p>
 
-# TODO UPDATE README
-
-To generate the API client: swagger-codegen generate -l typescript-fetch -i https://ebecoconnect.com/swagger/v1/swagger.json -o src/api-client
 
 # TODO: Tasks
 
 Platform which handles:
-* reading configuration
-* authentication & token renewal (half way through expiration?)
-* getting list of devices
-* accessory creation & removal
+* removal of devices which no longer exists
 
-Accessory which handles:
-* get device status
-* set device status
-* defers to platform for API host & token
-* created with a deviceId / initial device status
+Test cases
+
 
 Docker-compose file, using wiremock, to create a mock API server
 
@@ -29,24 +20,14 @@ Configuration file requires:
 * username
 * password
 * (optional) api host (for pointing to mock server)
+* (optional) poll frequency
 
 
 
-# Homebridge Platform Plugin Template
+# Ebeco Platform Plugin 
 
-This is a template Homebridge platform plugin and can be used as a base to help you get started developing your own plugin.
+TODO: ADD DOCS
 
-This template should be use in conjunction with the [developer documentation](https://developers.homebridge.io/). A full list of all supported service types, and their characteristics is available on this site.
-
-## Clone As Template
-
-Click the link below to create a new GitHub Repository using this template, or click the *Use This Template* button above.
-
-<span align="center">
-
-### [Create New Repository From Template](https://github.com/homebridge/homebridge-plugin-template/generate)
-
-</span>
 
 ## Setup Development Environment
 
@@ -116,13 +97,7 @@ npm run watch
 
 This will launch an instance of Homebridge in debug mode which will restart every time you make a change to the source code. It will load the config stored in the default location under `~/.homebridge`. You may need to stop other running instances of Homebridge while using this command to prevent conflicts. You can adjust the Homebridge startup command in the [`nodemon.json`](./nodemon.json) file.
 
-## Customise Plugin
 
-You can now start customising the plugin template to suit your requirements.
-
-* [`src/platform.ts`](./src/platform.ts) - this is where your device setup and discovery should go.
-* [`src/platformAccessory.ts`](./src/platformAccessory.ts) - this is where your accessory control logic should go, you can rename or create multiple instances of this file for each accessory type you need to implement as part of your platform plugin. You can refer to the [developer documentation](https://developers.homebridge.io/) to see what characteristics you need to implement for each service type.
-* [`config.schema.json`](./config.schema.json) - update the config schema to match the config you expect from the user. See the [Plugin Config Schema Documentation](https://developers.homebridge.io/#/config-schema).
 
 ## Versioning Your Plugin
 
@@ -145,15 +120,6 @@ npm version update
 npm version patch
 ```
 
-## Publish Package
-
-When you are ready to publish your plugin to [npm](https://www.npmjs.com/), make sure you have removed the `private` attribute from the [`package.json`](./package.json) file then run:
-
-```
-npm publish
-```
-
-If you are publishing a scoped plugin, i.e. `@username/homebridge-xxx` you will need to add `--access=public` to command the first time you publish.
 
 #### Publishing Beta Versions
 
