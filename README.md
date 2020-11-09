@@ -9,7 +9,7 @@
 # Homebridge Ebeco
 
 ## Introduction
-In this plugin you will be able to add your Ebeco WiFi-ready EB-Therm 500 to HomeBridge and controling it through Siri and Home App.
+In this plugin you will be able to add your <a href="https://www.ebeco.com" target="_blank">Ebeco</a> WiFi-ready EB-Therm 500 to HomeBridge and controling it through Siri and Home App.
 
 ## Installation
 
