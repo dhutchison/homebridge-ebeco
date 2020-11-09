@@ -1,0 +1,19 @@
+{
+  "bridge": {
+    
+  },
+  "description": "HomeBridge HTTP Status Control",
+  "accessories": [],
+  "platforms": [
+    {
+      "platform": "Ebeco",
+      "plugin_map": {
+                "plugin_name": "homebridge-ebeco"
+      },
+            "name": "Ebeco",
+            "username": "YOUR EBECO CONNECT E-MAIL/USERNAME",
+            "password": "YOUR EBECO CONNECT PASSWORD"
+        }
+    }
+  ]
+}
