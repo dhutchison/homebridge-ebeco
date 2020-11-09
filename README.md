@@ -32,11 +32,12 @@ We will need to input your username and password for the Ebeco Connect app that 
       "platform": "Ebeco",
       "name": "Ebeco",
       "plugin_map": {
-            "plugin_name": "homebridge-ebeco"
+         "plugin_name": "homebridge-ebeco"
       },
       "name": "Ebeco",
       "username": "YOUR EBECO CONNECT USERNAME",
-      "password": "YOUR EBECO CONNECT PASSWORD"
+      "password": "YOUR EBECO CONNECT PASSWORD",
+      "pollFrequency": value // A value between 500 and 10000
       }
     }
     // End of the config
@@ -45,5 +46,10 @@ We will need to input your username and password for the Ebeco Connect app that 
 
 ## Features Supported
 
-* Heat On/Off and target tempeture (If your device supports this)
+* Heat On/Off and target tempeture
+
+## Restrictions
+
+* All the devices will be added if you have more than one, choosing which not to add will be added to if more people are asking for it.
+* Making a schedule through the Ebeco Connect app will override the changes in the plugin. So setting up a degree here and having a schedule to change it to something else in the app later will override the plugin.
 
