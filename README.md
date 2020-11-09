@@ -37,7 +37,7 @@ We will need to input your username and password for the Ebeco Connect app that 
       "name": "Ebeco",
       "username": "YOUR EBECO CONNECT USERNAME",
       "password": "YOUR EBECO CONNECT PASSWORD",
-      "pollFrequency": value // A value between 500 and 10000
+      "pollFrequency": value // A value between 500 and 10000 ms
       }
     }
     // End of the config
