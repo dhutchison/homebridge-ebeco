@@ -19,9 +19,9 @@ export class EbecoPlatformAccessory {
 
     // set accessory information
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
-      .setCharacteristic(this.platform.Characteristic.Manufacturer, 'Default-Manufacturer')
-      .setCharacteristic(this.platform.Characteristic.Model, 'Default-Model')
-      .setCharacteristic(this.platform.Characteristic.SerialNumber, 'Default-Serial');
+      .setCharacteristic(this.platform.Characteristic.Manufacturer, 'Ebeco')
+      .setCharacteristic(this.platform.Characteristic.Model, 'EB-Therm 500')
+      .setCharacteristic(this.platform.Characteristic.SerialNumber, 'accessory.context.device.id');
 
     /* Get the service if it exists, otherwise create a new service */
     this.service = this.accessory.getService(this.platform.Service.Thermostat) || 
