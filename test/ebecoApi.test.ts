@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { EbecoPlatformConfig, PLATFORM_NAME } from '../src/settings';
-import { EbecoApi, LoginRequest, LoginResponse, MvcAjaxResponse } from '../src/lib/ebecoApi';
+import { Device, EbecoApi, LoginRequest, LoginResponse, MvcAjaxResponse } from '../src/lib/ebecoApi';
 import { Logger } from 'homebridge';
 
 import axios from 'axios';
@@ -8,8 +8,11 @@ import axios from 'axios';
 /* Setup a mock for axios, we don't want to do any real API calls in the test suite.
  * Need the mockedAxios constant to allow us to have types correct in this test file
  */
-jest.mock('axios');
-const mockedAxios = axios as jest.Mocked<typeof axios>;
+// jest.mock('axios');
+// const mockedAxios = axios as jest.Mocked<typeof axios>;
+const mockedAxiosGet = axios.get = jest.fn();
+const mockedAxiosPost = axios.post = jest.fn();
+
 
 describe('EbecoApi construction & validation', () => {
 
@@ -61,7 +64,7 @@ describe('EbecoApi construction & validation', () => {
 
     /* Check the default API host was added */
     expect(validConfig.apiHost).toBe('https://ebecoconnect.com');
-    expect(mockedAxios.defaults.baseURL).toBe(validConfig.apiHost);
+    expect(axios.defaults.baseURL).toBe(validConfig.apiHost);
 
   });
 
@@ -82,7 +85,7 @@ describe('EbecoApi construction & validation', () => {
       success: true,
       unAuthorizedRequest: false,
     };
-    mockedAxios.post.mockImplementationOnce(() => Promise.resolve({
+    mockedAxiosPost.mockImplementationOnce(() => Promise.resolve({
       data: successfulResponseWrapper,
     }));
 
@@ -93,7 +96,7 @@ describe('EbecoApi construction & validation', () => {
 
     /* Call the login, and do some tests */
     await expect(apiClient.login()).resolves.toBe(successfulResponse);
-    expect(mockedAxios.post).toHaveBeenCalledWith(
+    expect(mockedAxiosPost).toHaveBeenCalledWith(
       '/api/TokenAuth/Authenticate',
       expectedRequest,
     );
@@ -111,13 +114,126 @@ describe('EbecoApi construction & validation', () => {
       success: true,
       unAuthorizedRequest: false,
     };
-    mockedAxios.post.mockImplementationOnce(() => Promise.resolve({
+    mockedAxiosPost.mockImplementationOnce(() => Promise.resolve({
       data: failedResponseWrapper,
     }));
     
     /* Call the login, and do some tests */
     const apiClient = new EbecoApi(logger, validConfig);
     await expect(apiClient.login()).rejects.toBe('Account requires two factor authentication');
+  });
+
+  it('Test listing devices successfully', async() => {
+
+    const expectedResponse: Device[] = [
+      {
+        displayName: 'Test Device',
+        powerOn: true,
+        temperatureSet: 20,
+        temperatureFloor: 21,
+        temperatureRoom: 22,
+        hasError: false,
+        id: 1,
+      },
+    ];
+
+    const successfulResponseWrapper: MvcAjaxResponse<Device[]> = {
+      result: expectedResponse,
+      success: true,
+      unAuthorizedRequest: false,
+    };
+
+    mockedAxiosGet.mockImplementationOnce(() => Promise.resolve({
+      data: successfulResponseWrapper,
+    }));
+    
+    /* Call the get user device api, and do some tests */
+    const apiClient = new EbecoApi(logger, validConfig);
+    validConfig.accessToken = '24f76650-2ec6-44a7-a0bd-c0a846bc6c41';
+    await expect(apiClient.getUserDevices()).resolves.toBe(expectedResponse);
+    expect(mockedAxiosGet).toHaveBeenCalledWith(
+      '/api/services/app/Devices/GetUserDevices',
+      {
+        headers: {
+          Authorization: 'Bearer 24f76650-2ec6-44a7-a0bd-c0a846bc6c41',
+        },
+      },
+    );
+
+  });
+
+  it('Test listing devices, with a re-authentication', async() => {
+    
+    console.log(axios.interceptors.response);
+    
+    /* Configure the GET mock and responses, 
+     * which will be called when we try to load the device list 
+     */
+    const expectedDeviceResponse: Device[] = [
+      {
+        displayName: 'Test Device',
+        powerOn: true,
+        temperatureSet: 20,
+        temperatureFloor: 21,
+        temperatureRoom: 22,
+        hasError: false,
+        id: 1,
+      },
+    ];
+
+    const expectedDeviceResponseWrapper: MvcAjaxResponse<Device[]> = {
+      result: expectedDeviceResponse,
+      success: true,
+      unAuthorizedRequest: false,
+    };
+
+    mockedAxiosGet
+      /* First mock will return a 401 */
+      .mockImplementationOnce(() => Promise.reject({
+        status: 401,
+      }))
+      /* Then the next one will return data */
+      .mockImplementationOnce(() => Promise.resolve({
+        data: expectedDeviceResponseWrapper,
+      }));
+
+    /* Define the request & response we expect for a login POST, and configure the mock */
+    const expectedLoginRequest: LoginRequest = {
+      userNameOrEmailAddress: 'hello',
+      password: 'world',
+    };
+    const expectedLoginResponse: LoginResponse = {
+      accessToken: 'cbffd7f1-7bd9-4ca9-9997-348dcb076576',
+      expireInSeconds: 84600,
+      requiresTwoFactorVerification: false,
+    };
+    const expectedLoginResponseWrapper: MvcAjaxResponse<LoginResponse> = {
+      result: expectedLoginResponse,
+      success: true,
+      unAuthorizedRequest: false,
+    };
+    mockedAxiosPost.mockImplementationOnce(() => Promise.resolve({
+      data: expectedLoginResponseWrapper,
+    }));
+      
+
+    /* Call the get user device api, and do some tests */
+    const apiClient = new EbecoApi(logger, validConfig);
+    await expect(apiClient.getUserDevices()).resolves.toBe(expectedDeviceResponse);
+    expect(mockedAxiosGet).toHaveBeenCalledWith(
+      '/api/services/app/Devices/GetUserDevices',
+      {
+        headers: {
+          Authorization: 'Bearer cbffd7f1-7bd9-4ca9-9997-348dcb076576',
+        },
+      },
+    );
+
+    expect(mockedAxiosGet).toHaveBeenCalledTimes(2);
+    expect(mockedAxiosPost).toHaveBeenCalledTimes(1);
+
+
+
   });
 
 });

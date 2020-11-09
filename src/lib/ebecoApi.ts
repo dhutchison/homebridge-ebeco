@@ -56,11 +56,11 @@ export interface Device {
         /**
          * Program currently set on thermostat. Possible values are: Manual, Week, Timer
          */
-        selectedProgram: string;
+        selectedProgram?: string;
         /**
          * State of current program. Possible values are: Standby, Active, Timer
          */
-        programState: string;
+        programState?: string;
         /**
          * Temperature until next program event, or fixed when on manual program. When on Timer program, 
          * temperature is set ‘Active’ temperature (when the timer is running)
@@ -81,7 +81,7 @@ export interface Device {
         /**
          * Description of error.
          */
-        errorMessage: string;
+        errorMessage?: string;
         /**
          * Thermostat id
          */
