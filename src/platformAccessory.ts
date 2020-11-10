@@ -31,6 +31,19 @@ export class EbecoPlatformAccessory {
     this.service.setCharacteristic(this.platform.Characteristic.Name, 
       accessory.context.device.displayName);
 
+    /* Configure the valid values we have for TargetHeatingCoolingState */
+    let validTargetValues: number[];
+    if (this.platform.config.includeOffOption === undefined || this.platform.config.includeOffOption) {
+      validTargetValues = [
+        this.platform.Characteristic.TargetHeatingCoolingState.HEAT,
+        this.platform.Characteristic.TargetHeatingCoolingState.OFF,
+      ];
+    } else {
+      validTargetValues = [
+        this.platform.Characteristic.TargetHeatingCoolingState.HEAT,
+      ];
+    }
+
     /* Set the "required characteristics" based on the initial device state we got. 
      *
      * Also configure 'set' methods for characteristics we want to control. Not setting up
@@ -44,7 +57,11 @@ export class EbecoPlatformAccessory {
       .updateValue(this.getCurrentHeatingCoolingStateForDevice(accessory.context.device));
     
     this.service.getCharacteristic(this.platform.Characteristic.TargetHeatingCoolingState)
-      .updateValue(this.getTargetHeatingCoolingStateForDevice(accessory.context.device));
+      .setProps({
+        validValues: validTargetValues,
+      })
+      .updateValue(this.getTargetHeatingCoolingStateForDevice(accessory.context.device))
+      .on('set', this.setTargetHeatingCoolingState.bind(this));
     
     this.service.getCharacteristic(this.platform.Characteristic.CurrentTemperature)
       .updateValue(this.getCurrentTemperatureForDevice(accessory.context.device));
@@ -76,9 +93,11 @@ export class EbecoPlatformAccessory {
             this.platform.Characteristic.TargetHeatingCoolingState, 
             this.getTargetHeatingCoolingStateForDevice(device));
       
-          this.service.updateCharacteristic(this.platform.Characteristic.CurrentTemperature, this.getCurrentTemperatureForDevice(device));
+          this.service.updateCharacteristic(this.platform.Characteristic.CurrentTemperature, 
+            this.getCurrentTemperatureForDevice(device));
 
-          this.service.updateCharacteristic(this.platform.Characteristic.TargetTemperature, device.temperatureSet);
+          this.service.updateCharacteristic(this.platform.Characteristic.TargetTemperature, 
+            device.temperatureSet);
       
         })
         .catch(err => {
@@ -157,8 +176,72 @@ export class EbecoPlatformAccessory {
 
     const apiClient = new EbecoApi(this.platform, this.platform.log, this.platform.config);
     apiClient.updateDeviceState(updatedDeviceState)
-      .then(success => callback(null, success))
+      .then(success => {
+        if (success) {
+          /* API reported a successful update */
+          callback(null, value);
+        } else {
+          /* API reported the state was not updated, fail */
+          callback(new Error('Update to device state was not successful'));
+        }
+      })
       .catch(err => callback(err));
+  }
+
+  /**
+   * Set the target power state for the themostat. 
+   * @param value the new value
+   * @param callback the homebridge callback to invoke after the request has been sent to the device. 
+   */
+  private setTargetHeatingCoolingState(value: CharacteristicValue, callback: CharacteristicSetCallback) {
+
+    if (this.isOffOptionAllowed()) {
+      /* We allow an off option, can call the API if the value has changed */
+      const newPowerOnState: boolean = (value as number) === this.platform.Characteristic.TargetHeatingCoolingState.HEAT;
+
+      if (newPowerOnState !== this.accessory.context.lastState.powerOn) {
+        /* State has changed, call the API to perform an update */
+        const updatedDeviceState: DeviceUpdateRequest = {
+          id: this.accessory.context.device.id,
+          powerOn: newPowerOnState,
+          temperatureSet: this.accessory.context.lastState.temperatureSet,
+        };
+    
+        this.platform.log.debug('setTargetHeatingCoolingState -> %o', updatedDeviceState);
+    
+        const apiClient = new EbecoApi(this.platform, this.platform.log, this.platform.config);
+        apiClient.updateDeviceState(updatedDeviceState)
+          .then(success => {
+            if (success) {
+              /* API reported a successful update */
+              callback(null, value);
+            } else {
+              /* API reported the state was not updated, fail */
+              callback(new Error('Update to device state was not successful'));
+            }
+          })
+          .catch(err => callback(err));
+
+      } else {
+        /* Already at the right state, just call the callback */
+        callback(null, value);
+      }
+
+
+    } else {
+      /* We can only have a heat option, just call the callback */
+      callback(null, this.platform.Characteristic.TargetHeaterCoolerState.HEAT);
+    }
+
+  }
+
+  /**
+   * Helper method to determine if we are allowed to have an "off" value for TargetHeaterCoolerState.
+   * 
+   * @returns true if "off" is allowed, otherwise false. 
+   */
+  private isOffOptionAllowed(): boolean {
+    return (this.platform.config.includeOffOption === undefined || this.platform.config.includeOffOption);
   }
 
 }

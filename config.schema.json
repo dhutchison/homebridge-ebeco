@@ -21,6 +21,12 @@
         "type": "string",
         "required": true
       },
+      "includeOffOption": {
+        "title": "Include Off Option",
+        "type": "boolean",
+        "required": false,
+        "default": true
+      },
       "pollFrequency": {
         "title": "API Poll Frequency (ms)",
         "type": "integer",
@@ -31,7 +37,7 @@
         "description": "How frequently to update the plugin state from the Ebeco API"
       },
       "apiHost": {
-        "title": "API Host",
+        "title": "API Host (Development Only)",
         "type": "string",
         "required": false,
         "placeholder": "https://ebecoconnect.com",
