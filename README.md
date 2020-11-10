@@ -1,142 +1,56 @@
 
 <p align="center">
 
-<img src="https://github.com/homebridge/branding/raw/master/logos/homebridge-wordmark-logo-vertical.png" width="150">
+<img src="ebeco_homebridge.png" width="400">
 
 </p>
 
 
-# TODO: Tasks
+# Homebridge Ebeco
 
-Platform which handles:
-* removal of devices which no longer exists
+## Introduction
+In this plugin you will be able to add your <a href="https://www.ebeco.com" target="_blank">Ebeco</a> WiFi-ready EB-Therm 500 to HomeBridge and controling it through Siri and Home App.
 
-Test cases
+## Installation
 
+Assuming you have homebridge installed and set up, you can run below command to install this plugin
 
-Docker-compose file, using wiremock, to create a mock API server
+`npm install -g homebridge-ebeco`
 
-Configuration file requires:
-* username
-* password
-* (optional) api host (for pointing to mock server)
-* (optional) poll frequency
+Then, you can add the platform configuration to your config.json or you can configure it throguh the UI directly.
 
+## Configuration
 
+See `config-sample.json` for an example.
 
-# Ebeco Platform Plugin 
+We will need to input your username and password for the Ebeco Connect app that you setup with the device.
 
-TODO: ADD DOCS
-
-
-## Setup Development Environment
-
-To develop Homebridge plugins you must have Node.js 12 or later installed, and a modern code editor such as [VS Code](https://code.visualstudio.com/). This plugin template uses [TypeScript](https://www.typescriptlang.org/) to make development easier and comes with pre-configured settings for [VS Code](https://code.visualstudio.com/) and ESLint. If you are using VS Code install these extensions:
-
-* [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
-
-## Install Development Dependencies
-
-Using a terminal, navigate to the project folder and run this command to install the development dependencies:
-
-```
-npm install
+```js
+"platforms": [
+    // This is the config for this plugin  
+    {
+      "platform": "Ebeco",
+      "name": "Ebeco",
+      "plugin_map": {
+        "plugin_name": "homebridge-ebeco"
+      },
+      "username": "YOUR EBECO CONNECT USERNAME",
+      "password": "YOUR EBECO CONNECT PASSWORD"
+    }
+    // End of the config
+  ],
 ```
 
-## Update package.json
+## Features Supported
 
-Open the [`package.json`](./package.json) and change the following attributes:
+* Heat On/Off and target tempeture
 
-* `name` - this should be prefixed with `homebridge-` or `@username/homebridge-` and contain no spaces or special characters apart from a dashes
-* `displayName` - this is the "nice" name displayed in the Homebridge UI
-* `repository.url` - Link to your GitHub repo
-* `bugs.url` - Link to your GitHub repo issues page
+## Restrictions
 
-When you are ready to publish the plugin you should set `private` to false, or remove the attribute entirely.
+* All the devices will be added if you have more than one, choosing which not to add will be added to if more people are asking for it.
+* Making a schedule through the Ebeco Connect app will override the changes in the plugin. So setting up a degree here and having a schedule to change it to something else in the app later will override the plugin.
 
-## Update Plugin Defaults
+## Plugin Development
 
-Open the [`src/settings.ts`](./src/settings.ts) file and change the default values:
-
-* `PLATFORM_NAME` - Set this to be the name of your platform. This is the name of the platform that users will use to register the plugin in the Homebridge `config.json`.
-* `PLUGIN_NAME` - Set this to be the same name you set in the [`package.json`](./package.json) file. 
-
-Open the [`config.schema.json`](./config.schema.json) file and change the following attribute:
-
-* `pluginAlias` - set this to match the `PLATFORM_NAME` you defined in the previous step.
-
-## Build Plugin
-
-TypeScript needs to be compiled into JavaScript before it can run. The following command will compile the contents of your [`src`](./src) directory and put the resulting code into the `dist` folder.
-
-```
-npm run build
-```
-
-## Link To Homebridge
-
-Run this command so your global install of Homebridge can discover the plugin in your development environment:
-
-```
-npm link
-```
-
-You can now start Homebridge, use the `-D` flag so you can see debug log messages in your plugin:
-
-```
-homebridge -D
-```
-
-## Watch For Changes and Build Automatically
-
-If you want to have your code compile automatically as you make changes, and restart Homebridge automatically between changes you can run:
-
-```
-npm run watch
-```
-
-This will launch an instance of Homebridge in debug mode which will restart every time you make a change to the source code. It will load the config stored in the default location under `~/.homebridge`. You may need to stop other running instances of Homebridge while using this command to prevent conflicts. You can adjust the Homebridge startup command in the [`nodemon.json`](./nodemon.json) file.
-
-
-
-## Versioning Your Plugin
-
-Given a version number `MAJOR`.`MINOR`.`PATCH`, such as `1.4.3`, increment the:
-
-1. **MAJOR** version when you make breaking changes to your plugin,
-2. **MINOR** version when you add functionality in a backwards compatible manner, and
-3. **PATCH** version when you make backwards compatible bug fixes.
-
-You can use the `npm version` command to help you with this:
-
-```bash
-# major update / breaking changes
-npm version major
-
-# minor update / new features
-npm version update
-
-# patch / bugfixes
-npm version patch
-```
-
-
-#### Publishing Beta Versions
-
-You can publish *beta* versions of your plugin for other users to test before you release it to everyone.
-
-```bash
-# create a new pre-release version (eg. 2.1.0-beta.1)
-npm version prepatch --preid beta
-
-# publsh to @beta
-npm publish --tag=beta
-```
-
-Users can then install the  *beta* version by appending `@beta` to the install command, for example:
-
-```
-sudo npm install -g homebridge-example-plugin@beta
-```
-
+TODO: add in details of how this is developed & tested. Docker-compose file for mocking etc.
 
