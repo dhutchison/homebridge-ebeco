@@ -1,0 +1,29 @@
+{
+    "result": [
+        {
+            "displayName": "NAME",
+            "powerOn": false,
+            "selectedProgram": "Home",
+            "programState": "Standby",
+            "temperatureSet": 20.0,
+            "temperatureFloor": 22.0,
+            "temperatureRoom": 21.0,
+            "relayOn": false,
+            "minutesToTarget": 0,
+            "remoteInput": false,
+            "hasError": false,
+            "errorMessage": null,
+            "todaysOnMinutes": 359,
+            "building": {
+                "name": "BUILDING_NAME",
+                "id": "BUILDING_ID"
+            },
+            "id": 11
+        }
+    ],
+    "targetUrl": null,
+    "success": true,
+    "error": null,
+    "unAuthorizedRequest": false,
+    "__abp": true
+}

@@ -27,6 +27,12 @@ export interface EbecoPlatformConfig extends PlatformConfig {
     password?: string;
 
     /**
+     * Boolean indicating if there should be an "off" option. If this is set
+     * to false, only temperature can be controlled.
+     */
+    includeOffOption?: boolean;
+
+    /**
      * Frequency of API poll requests (in milliseconds)
      */
     pollFrequency?: number;

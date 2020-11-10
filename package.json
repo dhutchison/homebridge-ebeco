@@ -1,8 +1,8 @@
 {
   "displayName": "Ebeco",
   "name": "@devwithimagination/homebridge-ebeco",
-  "version": "0.0.1-alpha.1",
-  "description": "A short description about what your plugin does.",
+  "version": "0.0.1-beta.1",
+  "description": "Homebridge plugin for the Ebeco EB-Therm 500 thermostat.",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",

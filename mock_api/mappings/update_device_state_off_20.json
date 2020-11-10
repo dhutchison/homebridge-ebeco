@@ -1,0 +1,29 @@
+{
+    "scenarioName": "Update Device State",
+    "requiredScenarioState": "Started",
+    "newScenarioState": "device off",
+    "request": {
+        "method": "PUT",
+        "url": "/api/services/app/Devices/UpdateUserDevice",
+        "headers": {
+            "Abp.TenantId": {
+                "equalTo": "1"
+            },
+            "Content-Type": {
+                "contains": "application/json"
+            },
+            "Authorization": {
+                "equalTo": "Bearer ACCESS_TOKEN"
+            }
+        },
+        "bodyPatterns": [
+            { 
+                "equalToJson": "{ \"powerOn\": false, \"temperatureSet\": 20, \"id\": 11 }" 
+            }
+         ]
+    },
+    "response": {
+        "status": 201,
+        "bodyFileName": "update_device_state_response.json"
+    }
+}
