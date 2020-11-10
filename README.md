@@ -21,7 +21,7 @@ Then, you can add the platform configuration to your config.json or you can conf
 
 ## Configuration
 
-See config-sample.json for example
+See `config-sample.json` for an example.
 
 We will need to input your username and password for the Ebeco Connect app that you setup with the device.
 
@@ -32,13 +32,10 @@ We will need to input your username and password for the Ebeco Connect app that 
       "platform": "Ebeco",
       "name": "Ebeco",
       "plugin_map": {
-         "plugin_name": "homebridge-ebeco"
+        "plugin_name": "homebridge-ebeco"
       },
-      "name": "Ebeco",
       "username": "YOUR EBECO CONNECT USERNAME",
-      "password": "YOUR EBECO CONNECT PASSWORD",
-      "pollFrequency": value // A value between 500 and 60000 ms
-      }
+      "password": "YOUR EBECO CONNECT PASSWORD"
     }
     // End of the config
   ],
@@ -52,4 +49,8 @@ We will need to input your username and password for the Ebeco Connect app that 
 
 * All the devices will be added if you have more than one, choosing which not to add will be added to if more people are asking for it.
 * Making a schedule through the Ebeco Connect app will override the changes in the plugin. So setting up a degree here and having a schedule to change it to something else in the app later will override the plugin.
+
+## Plugin Development
+
+TODO: add in details of how this is developed & tested. Docker-compose file for mocking etc.
 
