@@ -110,7 +110,7 @@ export class EbecoPlatformAccessory {
 
 
   private getCurrentTemperatureForDevice(device: Device): number {
-    return device.temperatureRoom;
+    return device.temperatureFloor;
   }
 
   private getCurrentHeatingCoolingStateForDevice(device: Device) {
