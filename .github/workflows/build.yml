@@ -1,9 +1,16 @@
-name: Build and Lint PR
-
-on: [pull_request]
-
+name: Build
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types: [opened, synchronize, reopened]
 jobs:
   build:
+    runs-on: ubuntu-latest
+
+  sonarcloud:
+    name: SonarCloud
     runs-on: ubuntu-latest
 
     strategy:
@@ -13,6 +20,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
       - name: Use Node.js ${{ matrix.node-version }} 
         uses: actions/setup-node@v1
@@ -25,7 +34,16 @@ jobs:
       - name: Lint the project
         run: npm run lint
 
+      - name: Test the project
+        run: npm run test
+
       - name: Build the project
         run: npm run build
         env:
           CI: true
+          
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
