@@ -9,10 +9,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-  sonarcloud:
-    name: SonarCloud
-    runs-on: ubuntu-latest
-
     strategy:
       matrix:
         # the Node.js versions to build on
@@ -41,7 +37,7 @@ jobs:
         run: npm run build
         env:
           CI: true
-          
+
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
