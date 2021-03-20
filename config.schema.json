@@ -21,6 +21,16 @@
         "type": "string",
         "required": true
       },
+      "temperatureSensor": {
+        "title": "Sensor Location",
+        "type": "string",
+        "default": "floor",
+        "oneOf": [
+          { "title": "Floor", "enum": ["floor"] },
+          { "title": "Room", "enum": ["room"] }
+        ],
+        "required": true
+      },
       "includeOffOption": {
         "title": "Include Off Option",
         "type": "boolean",
