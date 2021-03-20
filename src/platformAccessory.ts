@@ -2,6 +2,7 @@ import { Service, PlatformAccessory, CharacteristicValue, CharacteristicSetCallb
 
 import { EbecoHomebridgePlatform } from './platform';
 import { Device, DeviceUpdateRequest } from './lib/ebecoApi';
+import { TemperatureSensor } from './settings';
 
 /**
  * Platform Accessory
@@ -110,7 +111,14 @@ export class EbecoPlatformAccessory {
 
 
   private getCurrentTemperatureForDevice(device: Device): number {
-    return device.temperatureFloor;
+    this.platform.log.info('Sensor config: %s', this.platform.config.temperatureSensor);
+    if (this.platform.config.temperatureSensor === undefined || 
+      this.platform.config.temperatureSensor === TemperatureSensor.FLOOR) {
+
+      return device.temperatureFloor;
+    } else {
+      return device.temperatureRoom;
+    }
   }
 
   private getCurrentHeatingCoolingStateForDevice(device: Device) {

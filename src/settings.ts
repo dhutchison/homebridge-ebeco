@@ -10,6 +10,14 @@ export const PLATFORM_NAME = 'Ebeco';
  */
 export const PLUGIN_NAME = 'homebridge-ebeco';
 
+/**
+ * Enum defining the temperature sensors we can use
+ */
+export enum TemperatureSensor {
+    FLOOR,
+    ROOM
+}
+
 
 /**
  * Interface which defines the fields that can be expected in our Platform Config. 
@@ -49,4 +57,13 @@ export interface EbecoPlatformConfig extends PlatformConfig {
      * but will be updated by the plugin as a result of an authentication request. 
      */
     accessToken?: string;
+
+    /**
+     * The temperature sensor to use.
+     * 
+     * This is optional as older versions of the plugin did not
+     * have this setting. If it is not configured a default will 
+     * be set on startup. 
+     */
+    temperatureSensor?: TemperatureSensor;
 }
