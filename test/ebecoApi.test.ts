@@ -29,20 +29,12 @@ describe('EbecoApi construction & validation', () => {
   const listDevicesUrl = '/api/services/app/Devices/GetUserDevices';
 
   /**
-   * The base headers expected to be sent with all GET requests. 
+   * The base headers expected to be sent with all requests. 
    * This excludes Authorization which needs added seperately. 
    */
-  const expectedGetHeaders = {
+  const expectedHeaders = {
     'Abp.TenantId': '1',
     'Content-Type': 'application/json',
-  };
-
-  /**
-   * Headers we expect to be sent when an authentication request is made
-   */
-  const expectedLoginHeaders = {
-    'Abp.TenantId': '1',
-    'Content-Type': 'application/json;charset=utf-8',
   };
   
 
@@ -101,7 +93,7 @@ describe('EbecoApi construction & validation', () => {
 
     const mockAdapter = new MockAdapter(axios);
     mockAdapter
-      .onPost(authUrl, expectedRequest, expectedLoginHeaders)
+      .onPost(authUrl, expectedRequest, expectedHeaders)
       .reply(200, successfulResponseWrapper)
       /* Configuring an "any" response to add debug logging */
       .onAny()
@@ -163,14 +155,14 @@ describe('EbecoApi construction & validation', () => {
     };
 
     console.log('Sending headers %o', {
-      ...expectedGetHeaders,
+      ...expectedHeaders,
       Authorization: 'Bearer 24f76650-2ec6-44a7-a0bd-c0a846bc6c41',
     });
 
     const mockAdapter = new MockAdapter(axios);
     mockAdapter
       .onGet(listDevicesUrl, undefined, {
-        ...expectedGetHeaders,
+        ...expectedHeaders,
         Authorization: 'Bearer 24f76650-2ec6-44a7-a0bd-c0a846bc6c41',
       })
       .reply(200, successfulResponseWrapper)
@@ -232,18 +224,18 @@ describe('EbecoApi construction & validation', () => {
     mockAdapter
       /* First mock will return a 401 */
       .onGet(listDevicesUrl, {}, {
-        ...expectedGetHeaders,
+        ...expectedHeaders,
         Authorization: 'Bearer 24f76650-2ec6-44a7-a0bd-c0a846bc6c41',
       })
       .replyOnce(401, {})
       /* Then the next one will return data */
       .onGet(listDevicesUrl, {}, {
-        ...expectedGetHeaders,
+        ...expectedHeaders,
         Authorization: 'Bearer cbffd7f1-7bd9-4ca9-9997-348dcb076576',
       })
       .replyOnce(200, expectedDeviceResponseWrapper)
       /* Configure authentication request mock */
-      .onPost(authUrl, expectedLoginRequest, expectedLoginHeaders)
+      .onPost(authUrl, expectedLoginRequest, expectedHeaders)
       .reply(200, expectedLoginResponseWrapper)
       /* Configuring an "any" response to add debug logging */
       .onAny()

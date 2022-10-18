@@ -15,7 +15,7 @@ In this plugin you will be able to add your <a href="https://www.ebeco.com" targ
 
 Assuming you have homebridge installed and set up, you can run below command to install this plugin
 
-`npm install -g homebridge-ebeco`
+`npm install -g @devwithimagination/homebridge-ebeco`
 
 Then, you can add the platform configuration to your config.json or you can configure it throguh the UI directly.
 
@@ -32,7 +32,7 @@ We will need to input your username and password for the Ebeco Connect app that 
       "platform": "Ebeco",
       "name": "Ebeco",
       "plugin_map": {
-        "plugin_name": "homebridge-ebeco"
+        "plugin_name": "@devwithimagination/homebridge-ebeco"
       },
       "username": "YOUR EBECO CONNECT USERNAME",
       "password": "YOUR EBECO CONNECT PASSWORD"
@@ -52,5 +52,9 @@ We will need to input your username and password for the Ebeco Connect app that 
 
 ## Plugin Development
 
-TODO: add in details of how this is developed & tested. Docker-compose file for mocking etc.
+The configuration for this plugin includes an extra `apiHost` parameter which can be used to set a different API host from the real one. A `docker-compose.yml` file is included which runs a [WireMock][wiremock] container including mock request/response cycles for the API. 
+
+
+
+[wiremock]: https://wiremock.org "Flexible API mocking - WireMock"
 
