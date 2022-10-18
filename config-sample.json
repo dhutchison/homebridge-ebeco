@@ -8,7 +8,7 @@
     {
       "platform": "Ebeco",
       "plugin_map": {
-        "plugin_name": "homebridge-ebeco"
+        "plugin_name": "@devwithimagination/homebridge-ebeco"
       },
       "name": "Ebeco",
       "username": "YOUR EBECO CONNECT E-MAIL/USERNAME",

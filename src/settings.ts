@@ -8,7 +8,7 @@ export const PLATFORM_NAME = 'Ebeco';
 /**
  * This must match the name of your plugin as defined the package.json
  */
-export const PLUGIN_NAME = 'homebridge-ebeco';
+export const PLUGIN_NAME = '@devwithimagination/homebridge-ebeco';
 
 /**
  * Enum defining the temperature sensors we can use
