@@ -111,7 +111,7 @@ export class EbecoPlatformAccessory {
 
 
   private getCurrentTemperatureForDevice(device: Device): number {
-    this.platform.log.info('Sensor config: %s', this.platform.config.temperatureSensor);
+    this.platform.log.debug('Sensor config: %s', this.platform.config.temperatureSensor);
     if (this.platform.config.temperatureSensor === undefined || 
       this.platform.config.temperatureSensor === TemperatureSensor.FLOOR) {
 
