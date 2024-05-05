@@ -1,0 +1,19 @@
+{
+  "bridge": {
+    
+  },
+  "description": "HomeBridge HTTP Status Control",
+  "accessories": [],
+  "platforms": [
+    {
+      "platform": "Ebeco",
+      "plugin_map": {
+        "plugin_name": "@devwithimagination/homebridge-ebeco"
+      },
+      "name": "Ebeco",
+      "username": "USER NAME",
+      "password": "PASSWORD",
+      "apiHost": "http://localhost:8080"
+    }
+  ]
+}

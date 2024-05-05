@@ -15,6 +15,7 @@ describe('EbecoApi construction & validation', () => {
     warn: jest.fn(),
     error: jest.fn(),
     log: jest.fn(),
+    success: jest.fn(),
   };
 
   /* Configure a valid config, this will be used in multiple tests */
